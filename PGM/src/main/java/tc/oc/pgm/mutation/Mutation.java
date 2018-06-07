@@ -43,7 +43,7 @@ public enum Mutation {
     BOAT       (BoatMutation.class,        Material.BOAT, false),
     TOOLS      (ToolsMutation.class,       Material.DIAMOND_PICKAXE),
     APOCALYPSE (ApocalypseMutation.class,  Material.NETHER_STAR),
-	ENDERCHEST (EnderChestMutation.class,  Material.ENDER_CHEST);
+    ENDERCHEST (EnderChestMutation.class,  Material.ENDER_CHEST);
 
     public static final String TYPE_KEY = "mutation.type.";
     public static final String DESCRIPTION_KEY = ".desc";
