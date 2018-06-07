@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.bukkit.inventory.ItemStack;
 import tc.oc.pgm.PGMTranslations;
 import tc.oc.pgm.kits.FreeItemKit;
 import tc.oc.pgm.kits.ItemKit;
@@ -23,6 +24,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 public class EnderChestMutation extends KitMutation {
+    // TODO: Mutation name and lore
 
     // TODO: Prettify the given item with name and lore
     final static ItemKit CHEST_KIT = new FreeItemKit(item(Material.ENDER_CHEST));
@@ -52,14 +54,15 @@ public class EnderChestMutation extends KitMutation {
         event.setCancelled(true);
 
         // T: Could this be null?
-        Player bukkit = event.getPlayer();
-        MatchPlayer player = match().getPlayer(bukkit);
+        Player bukkitPlayer = event.getPlayer();
+        MatchPlayer player = match().getPlayer(bukkitPlayer);
         Party team = player.getParty();
         // T: I don't know if this check is necessary or not.
         if (team.isObserving()) return;
 
         @Nullable Inventory teamInventory = teamChests.get(team);
 
+        // T: Should the inventories be initialized at the beginning of the match?
         if (teamInventory == null) {
             teamInventory = match().getServer().createInventory(null,
                     CHEST_SIZE,
@@ -67,12 +70,23 @@ public class EnderChestMutation extends KitMutation {
             teamChests.put(team, teamInventory);
         }
 
-        bukkit.openInventory(teamInventory);
+        bukkitPlayer.openInventory(teamInventory);
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        // TODO: Deny Ender chests movement
-        // TODO: Deny Wool movement if no wools allowed.
+        // T: I fear this first check may be a bit too resource intensive. I don't know if it is
+        // T: Should I maintain a HashSet of the inventories too just for this check?
+        if (teamChests.values().contains(event.getInventory()) &&
+                isItemEvil(event.getCurrentItem())) {
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean isItemEvil(ItemStack item) {
+        if(item.getType() == Material.ENDER_CHEST) return true;
+        if(noWoolsAllowed && item.getType() == Material.WOOL) return true;
+
+        return false;
     }
 }
