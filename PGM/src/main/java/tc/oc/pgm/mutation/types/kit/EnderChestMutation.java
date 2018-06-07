@@ -34,15 +34,15 @@ public class EnderChestMutation extends KitMutation {
 
     final static Map<Party, Inventory> teamChests = new WeakHashMap<>();
 
-    final boolean noWoolsAllowed;
+    final boolean woolsAllowed;
 
     // T: Test me
     // @Inject public EnderChestMutation(Match match, Optional<WoolMatchModule> wmm) {
     public EnderChestMutation(Match match) {
         super(match, false, CHEST_KIT);
         // T: Is this injectable?
-        this.noWoolsAllowed = match.getMatchModule(WoolMatchModule.class) == null;
-        // this.noWoolsAllowed = wmm.isPresent();
+        this.woolsAllowed = match.getMatchModule(WoolMatchModule.class) == null;
+        // this.woolsAllowed = !wmm.isPresent();
     }
 
     // T: Don't know if to use ignoreCancelled
@@ -85,7 +85,7 @@ public class EnderChestMutation extends KitMutation {
 
     private boolean isItemEvil(ItemStack item) {
         if(item.getType() == Material.ENDER_CHEST) return true;
-        if(noWoolsAllowed && item.getType() == Material.WOOL) return true;
+        if(!woolsAllowed && item.getType() == Material.WOOL) return true;
 
         return false;
     }
