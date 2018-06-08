@@ -10,9 +10,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
+import tc.oc.commons.bukkit.inventory.Slot;
 import tc.oc.pgm.PGMTranslations;
 import tc.oc.pgm.kits.FreeItemKit;
 import tc.oc.pgm.kits.ItemKit;
+import tc.oc.pgm.kits.SlotItemKit;
 import tc.oc.pgm.match.Match;
 import tc.oc.pgm.match.MatchPlayer;
 import tc.oc.pgm.match.Party;
@@ -25,11 +27,13 @@ import java.util.WeakHashMap;
 
 public class EnderChestMutation extends KitMutation {
     // TODO: Mutation name and lore
-
+    final static int SLOT_ID = 17; // Top right
     // TODO: Prettify the given item with name and lore
-    final static ItemKit CHEST_KIT = new FreeItemKit(item(Material.ENDER_CHEST));
-    // TODO: Translations
-    final static String CHEST_TITLE_KEY = "uhhh";
+    final static ItemKit CHEST_KIT = new SlotItemKit(item(Material.ENDER_CHEST), Slot.Player.forIndex(SLOT_ID));
+    // TODO: English Translations
+    final static String CHEST_TITLE_KEY = "mutation.type.enderchest.chest_title";
+    final static String ITEM_NAME_KEY = "mutation.type.enderchest.item_name";
+    final static String ITEM_LORE_KEY = "mutation.type.enderchest.item_lore";
     final static int CHEST_SIZE = 27;
 
     final static Map<Party, Inventory> teamChests = new WeakHashMap<>();
@@ -62,7 +66,7 @@ public class EnderChestMutation extends KitMutation {
 
         @Nullable Inventory teamInventory = teamChests.get(team);
 
-        // T: Should the inventories be initialized at the beginning of the match?
+        // TODO: Initialize at beginning of match instead.
         if (teamInventory == null) {
             teamInventory = match().getServer().createInventory(null,
                     CHEST_SIZE,
@@ -75,8 +79,7 @@ public class EnderChestMutation extends KitMutation {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        // T: I fear this first check may be a bit too resource intensive. I don't know if it is
-        // T: Should I maintain a HashSet of the inventories too just for this check?
+        // TODO: Make a hash set of the inventories for the check
         if (teamChests.values().contains(event.getInventory()) &&
                 isItemEvil(event.getCurrentItem())) {
             event.setCancelled(true);
