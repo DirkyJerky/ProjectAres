@@ -33,7 +33,6 @@ import java.util.function.Consumer;
 import static org.bukkit.Bukkit.getLogger;
 
 public class TeamChestMutation extends KitMutation {
-    // TODO: Mutation name and lore
     final static int SLOT_ID = 17; // Top right
     final static Material TOOL_TYPE = Material.ENDER_CHEST;
     // TODO: Prettify the given item with name and lore
@@ -47,7 +46,7 @@ public class TeamChestMutation extends KitMutation {
 
     final boolean woolsAllowed;
 
-    // T: Test me
+    // TODO: Test me
     // @Inject public TeamChestMutation(Match match, Optional<WoolMatchModule> wmm) {
     public TeamChestMutation(Match match) {
         super(match, false, CHEST_KIT);
@@ -107,9 +106,6 @@ public class TeamChestMutation extends KitMutation {
                 }
             }
         });
-
-
-
     }
 
     private boolean isItemEvil(ItemStack item) {
