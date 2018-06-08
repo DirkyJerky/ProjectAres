@@ -1,5 +1,6 @@
 package tc.oc.pgm.mutation.types.kit;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -13,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import tc.oc.commons.bukkit.inventory.Slot;
+import tc.oc.commons.bukkit.item.ItemBuilder;
 import tc.oc.commons.core.collection.WeakHashSet;
 import tc.oc.pgm.PGMTranslations;
 import tc.oc.pgm.kits.ItemKit;
@@ -133,9 +135,12 @@ public class TeamChestMutation extends KitMutation {
     }
 
     private Kit getKitForPlayer(MatchPlayer player) {
-        // TODO: Localized name
-        // TODO: Localized lore
-        ItemKit DEFAULT_KIT = new SlotItemKit(item(TOOL_TYPE), Slot.Player.forIndex(SLOT_ID));
-        return DEFAULT_KIT;
+        ItemStack stack = new ItemBuilder(item(TOOL_TYPE))
+                .name(ChatColor.DARK_PURPLE + PGMTranslations.t(ITEM_NAME_KEY, player))
+                .lore(ChatColor.DARK_AQUA + PGMTranslations.t(ITEM_LORE_KEY, player))
+                .get();
+
+        ItemKit kit = new SlotItemKit(stack, Slot.Player.forIndex(SLOT_ID));
+        return kit;
     }
 }
