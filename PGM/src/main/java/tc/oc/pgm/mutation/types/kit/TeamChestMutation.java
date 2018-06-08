@@ -38,13 +38,9 @@ public class TeamChestMutation extends KitMutation {
 
     final boolean woolsAllowed;
 
-    // TODO: Test me
-    // @Inject public TeamChestMutation(Match match, Optional<WoolMatchModule> wmm) {
     public TeamChestMutation(Match match) {
         super(match, false);
-        // T: Is this injectable?
         this.woolsAllowed = match.getMatchModule(WoolMatchModule.class) == null;
-        // this.woolsAllowed = !wmm.isPresent();
         for (Party party : match().getParties()) {
             if (party.isParticipatingType()) {
                 // Could the chest title be localized properly?
@@ -58,6 +54,7 @@ public class TeamChestMutation extends KitMutation {
         super.kits(player, kits);
         kits.add(getKitForPlayer(player));
     }
+
     // Open shared inventory instead of placing the chest
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChestUse(PlayerInteractEvent event) {
