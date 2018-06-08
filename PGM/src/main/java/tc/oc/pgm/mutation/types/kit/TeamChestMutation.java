@@ -38,8 +38,6 @@ public class TeamChestMutation extends KitMutation {
     final static Material TOOL_TYPE = Material.ENDER_CHEST;
     // TODO: Prettify the given item with name and lore
     final static ItemKit CHEST_KIT = new SlotItemKit(item(TOOL_TYPE), Slot.Player.forIndex(SLOT_ID));
-    // TODO: English Translations
-    final static String CHEST_TITLE_KEY = "mutation.type.teamchest.chest_title";
     final static String ITEM_NAME_KEY = "mutation.type.teamchest.item_name";
     final static String ITEM_LORE_KEY = "mutation.type.teamchest.item_lore";
     final static int CHEST_SIZE = 27;
