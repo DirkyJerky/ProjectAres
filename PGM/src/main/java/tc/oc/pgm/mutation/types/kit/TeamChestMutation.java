@@ -10,15 +10,13 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import tc.oc.commons.bukkit.inventory.Slot;
 import tc.oc.commons.core.collection.WeakHashSet;
 import tc.oc.pgm.PGMTranslations;
-import tc.oc.pgm.compose.Any;
-import tc.oc.pgm.kits.FreeItemKit;
 import tc.oc.pgm.kits.ItemKit;
+import tc.oc.pgm.kits.Kit;
 import tc.oc.pgm.kits.SlotItemKit;
 import tc.oc.pgm.match.Match;
 import tc.oc.pgm.match.MatchPlayer;
@@ -35,8 +33,6 @@ import static org.bukkit.Bukkit.getLogger;
 public class TeamChestMutation extends KitMutation {
     final static int SLOT_ID = 17; // Top right
     final static Material TOOL_TYPE = Material.ENDER_CHEST;
-    // TODO: Prettify the given item with name and lore
-    final static ItemKit CHEST_KIT = new SlotItemKit(item(TOOL_TYPE), Slot.Player.forIndex(SLOT_ID));
     final static String ITEM_NAME_KEY = "mutation.type.teamchest.item_name";
     final static String ITEM_LORE_KEY = "mutation.type.teamchest.item_lore";
     final static int CHEST_SIZE = 27;
@@ -49,7 +45,7 @@ public class TeamChestMutation extends KitMutation {
     // TODO: Test me
     // @Inject public TeamChestMutation(Match match, Optional<WoolMatchModule> wmm) {
     public TeamChestMutation(Match match) {
-        super(match, false, CHEST_KIT);
+        super(match, false);
         // T: Is this injectable?
         this.woolsAllowed = match.getMatchModule(WoolMatchModule.class) == null;
         // this.woolsAllowed = !wmm.isPresent();
@@ -63,6 +59,11 @@ public class TeamChestMutation extends KitMutation {
         inventorySet = new WeakHashSet<>(teamChests.values());
     }
 
+    @Override
+    public void kits(MatchPlayer player, List<Kit> kits) {
+        super.kits(player, kits);
+        kits.add(getKitForPlayer(player));
+    }
     // Open shared inventory instead of placing the chest
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onChestUse(PlayerInteractEvent event) {
@@ -86,7 +87,9 @@ public class TeamChestMutation extends KitMutation {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
         // No putting evil items (ender chest, possibly wool) into the chest
-        if (inventorySet.contains(event.getInventory()) &&
+        // BUG: Sometimes this check does not work.
+        if ((inventorySet.contains(event.getView().getTopInventory()) ||
+                inventorySet.contains(event.getView().getBottomInventory())) &&
                 isItemEvil(event.getCurrentItem())) {
             event.setCancelled(true);
             return;
@@ -100,7 +103,7 @@ public class TeamChestMutation extends KitMutation {
                         event.getCurrentItem().getType() == TOOL_TYPE &&
                         event.getAction() == InventoryAction.PICKUP_HALF) {
                     event.setCancelled(true);
-                    // This resets their mouse position annoyingly, but without it items can visually glitch in places.
+                    // This resets their mouse position annoyingly, but without it items can get stuck in places.
                     event.getActor().closeInventory();
                     event.getActor().openInventory(teamInventory);
                 }
@@ -127,5 +130,12 @@ public class TeamChestMutation extends KitMutation {
         }
 
         return Optional.of(teamInventory);
+    }
+
+    private Kit getKitForPlayer(MatchPlayer player) {
+        // TODO: Localized name
+        // TODO: Localized lore
+        ItemKit DEFAULT_KIT = new SlotItemKit(item(TOOL_TYPE), Slot.Player.forIndex(SLOT_ID));
+        return DEFAULT_KIT;
     }
 }
